@@ -9,6 +9,7 @@ import Report from "./components/Report.jsx";
 import Help from "./components/Help.jsx"
 import RecallPage from "./components/RecallPage.jsx";
 import RefundPage from "./components/RefundPage.jsx";
+import KitchenDisplay from "./components/KitchenDisplay";
 
 export default function App() {
   return (
@@ -25,6 +26,8 @@ export default function App() {
           <Route path="/Report" element={<Report />} />
           <Route path="/recall-orders" element={<RecallPage/>}/>
           <Route path="/refund-orders" element={<RefundPage/>}/>
+          <Route path="/kitchen" element={<KitchenDisplay />} />
+
         </Routes>
       </AuthProvider>
     </Router>
