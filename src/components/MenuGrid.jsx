@@ -119,7 +119,7 @@ export default function MenuGrid({
           query(collection(db, "Offers"), where("active", "==", true))
         );
 
-        const offersData = await Promise.all(
+         const offersData = await Promise.all(
           offersSnap.docs.map(async (offerDoc) => {
             const data = offerDoc.data();
             const items = await Promise.all(
@@ -133,11 +133,19 @@ export default function MenuGrid({
                   return itemSnap.exists()
                     ? { id: itemSnap.id, ...itemSnap.data() }
                     : null;
-                } else {
+                } else if (
+                  itemRef &&
+                  typeof itemRef === "object" &&
+                  typeof itemRef.path === "string"
+                ) {
+                  // Firestore DocumentReference
                   const itemSnap = await getDoc(itemRef);
                   return itemSnap.exists()
                     ? { id: itemSnap.id, ...itemSnap.data() }
                     : null;
+                } else {
+                  // Not a valid reference or string, skip
+                  return null;
                 }
               })
             );
