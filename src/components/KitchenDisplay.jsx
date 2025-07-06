@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase/config";
 import StatsScreen from "./StatsScreen";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query, where, Timestamp } from "firebase/firestore";
 
 const categories = ["All", "Bites", "Burgers", "Drinks", "Steady"];
 
@@ -16,7 +16,17 @@ export default function KitchenDisplay() {
   const [timers, setTimers] = useState({});
 
   useEffect(() => {
-    const q = query(collection(db, "KOT"), orderBy("date", "desc"));
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const startOfTomorrow = new Date(startOfToday);
+    startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+
+    const q = query(
+      collection(db, "KOT"),
+      where("date", ">=", Timestamp.fromDate(startOfToday)),
+      where("date", "<", Timestamp.fromDate(startOfTomorrow)),
+      orderBy("date", "desc")
+    );
     const unsub = onSnapshot(q, (snapshot) => {
       const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setOrders(data);
