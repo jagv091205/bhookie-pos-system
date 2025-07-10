@@ -277,6 +277,8 @@ const getCleanMealName = (name) => {
     }
   };
 
+  const [taxAmount, setTaxAmount] = useState(0); 
+  const TAX_RATE = 0.20; // 20% 
   // discount function for existing customers
   const updateTotals = (items = kotItems) => {
     const subtotal = items.reduce((sum, item) => {
@@ -309,8 +311,13 @@ const getCleanMealName = (name) => {
     const combinedDiscount = totalDiscount + loyaltyDiscount;
     const calculatedTotal = subtotal - combinedDiscount;
 
-    setDiscount(combinedDiscount);
-    setTotal(parseFloat(calculatedTotal));
+   setDiscount(combinedDiscount);
+  setTotal(parseFloat(calculatedTotal));
+
+  // Calculate tax from total (tax-inclusive)
+  const calculatedTax = calculatedTotal * (TAX_RATE / (1 + TAX_RATE));
+  setTaxAmount(calculatedTax);
+
 
     // Update employee-specific states
     if (isEmployee) {
@@ -1121,6 +1128,7 @@ const getCleanMealName = (name) => {
         })),
         orderType: orderType,
         methodOfPayment: paymentMethod,
+        taxAmount: Number(taxAmount.toFixed(2)),
       };
 
       // ✅ Save KOT to Firestore
@@ -1314,6 +1322,7 @@ if (mealCategories.includes(item.categoryId)) {
     <tr><td style="width: 60%;">Sub Total:</td><td style="width: 40%; text-align: right;">£${subTotal.toFixed(2)}</td></tr>
     ${appliedOffers.map(offer => `<tr><td style="color: red;">${offer.name} Discount:</td><td style="text-align: right; color: red;">-£${offer.discountAmount.toFixed(2)}</td></tr>`).join('')}
     <tr><td>Discount:</td><td style="text-align: right;">-£${discount.toFixed(2)}</td></tr>
+    <tr><td>Tax (20% incl.):</td><td style="text-align: right;">£${taxAmount.toFixed(2)}</td></tr>
     <tr><td><strong>Total:</strong></td><td style="text-align: right;"><strong>£${total.toFixed(2)}</strong></td></tr>
   </table>
 
@@ -1527,6 +1536,7 @@ if (mealCategories.includes(item.categoryId)) {
               <span>-£{(discount - totalDiscount).toFixed(2)}</span>
             </div>
           )}
+          <p>Tax (20% incl.): £{taxAmount.toFixed(2)}</p>
           <p className="font-bold text-lg">Total: £{total.toFixed(2)}</p>
         </div>
       </div>
