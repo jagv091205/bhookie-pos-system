@@ -37,6 +37,10 @@ export default function Footer() {
     navigate("/refund-orders");
   };
 
+  const handleKDSClick = () => {
+    navigate("/kitchen");
+  };
+
   return (
     <div className="flex flex-wrap justify-start gap-1">
       <button
@@ -49,7 +53,7 @@ export default function Footer() {
       </button>
 
       <button
-        onClick={handleRecallClick} // Updated handler
+        onClick={handleRecallClick}
         className="bg-blue-600 text-white font-bold py-2 px-2 rounded shadow text-sm w-[120px] h-[80px]"
       >
         RECALL
@@ -84,6 +88,14 @@ export default function Footer() {
         className="bg-orange-600 text-white font-bold py-2 px-2 rounded shadow text-sm w-[120px] h-[80px]"
       >
         REFUND
+      </button>
+      <button
+        onClick={handleKDSClick}
+        className="bg-green-600 text-white font-bold py-2 px-2 rounded shadow text-sm w-[120px] h-[80px]"
+      >
+        KDS
+        <br />
+        SCREEN
       </button>
     </div>
   );
