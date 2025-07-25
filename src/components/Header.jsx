@@ -65,7 +65,7 @@ export default function Header() {
 
   return (
     <div className="bg-gray-800 text-white flex justify-between items-center h-[60px] px-4">
-      <h2 className="text-1xl sm:text21xl md:text-2xl font-bold">Bhookie POS</h2>
+      <h2 className="text-1xl sm:text21xl md:text-2xl font-bold">Bhookie POS 1</h2>
   
       <div className="flex gap-4 sm:gap-6 md:gap-9 items-center text-gray-300 text-sm sm:text-base">
         {cashierName && (
