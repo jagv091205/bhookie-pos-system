@@ -27,12 +27,31 @@ export default function Header() {
       if (!snapshot.empty) {
         const attendanceData = snapshot.docs[0].data();
         const nameFromAttendance = attendanceData.cashierName?.trim();
-        if (nameFromAttendance && nameFromAttendance.toLowerCase() !== "cashier") {
+
+        // Query sessionHistory for active session cashierName
+        const sessionHistoryQuery = query(
+          collection(db, "sessionHistory"),
+          where("logoutTime", "==", null)
+        );
+        const sessionSnapshot = await getDocs(sessionHistoryQuery);
+        let sessionCashierName = null;
+        if (!sessionSnapshot.empty) {
+          const sessionData = sessionSnapshot.docs[0].data();
+          sessionCashierName = sessionData.cashierName?.trim();
+        }
+
+        // Show cashierName only if both conditions are true and names match
+        if (
+          nameFromAttendance &&
+          sessionCashierName &&
+          nameFromAttendance.toLowerCase() !== "cashier" &&
+          nameFromAttendance === sessionCashierName
+        ) {
           setCashierName(nameFromAttendance);
           return;
         }
 
-        // If no name in attendance, fallback to users_01
+        // If no name in attendance or mismatch, fallback to users_01
         const empId = attendanceData.cashierId;
         const usersQuery = query(
           collection(db, "users_01"),
@@ -43,9 +62,11 @@ export default function Header() {
           const userData = usersSnapshot.docs[0].data();
           const fallbackName = userData.name?.trim();
           setCashierName(fallbackName || "Cashier");
-        } else {
-          setCashierName("Cashier");
+          return;
         }
+
+        // If all fallbacks fail
+        setCashierName("Cashier");
       } else {
         // No open cashier
         setCashierName(null);
@@ -65,7 +86,7 @@ export default function Header() {
 
   return (
     <div className="bg-gray-800 text-white flex justify-between items-center h-[60px] px-4">
-      <h2 className="text-1xl sm:text21xl md:text-2xl font-bold">Bhookie Bold Street</h2>
+      <h2 className="text-1xl sm:text21xl md:text-2xl font-bold">Bhookie POS</h2>
   
       <div className="flex gap-4 sm:gap-6 md:gap-9 items-center text-gray-300 text-sm sm:text-base">
         {cashierName && (
